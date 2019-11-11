@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <script>
+
+        const FILAS = 3;
+        const COLUMNAS = 5;
+        var lista_numeros;
+
+        window.onload = generarCarton;
+
+
+        function pintarCarton() {
+            var tabla = document.getElementById("carton");
+            var fila_nueva;
+            var celda_nueva;
+
+            for (var fila = 0; fila < FILAS; fila++) {
+                fila_nueva = document.createElement("tr");
+                for (var columna = 0; columna < COLUMNAS; columna++) {
+                    celda_nueva = document.createElement("td");
+                    fila_nueva.appendChild(celda_nueva);
+
+                }
+                tabla.appendChild(fila_nueva);
+            }
+        }
+
+            function rellenarCarton() {
+                var lista_tds = document.querySelectorAll("td");
+                var dimension = FILAS * COLUMNAS;
+                var td_actual;
+                var num_aleatorio;
+                lista_numeros = new Array();//con esto me creo la lista vacía
+                var n_generados_valido = 0;
+
+                do
+                {
+                    num_aleatorio = genererarNumeroAleatorio(0, 90);
+                    if (lista_numeros.indexOf(num_aleatorio)==-1)
+                    {
+                        console.log ("No está, bien ");
+                        lista_numeros.push(num_aleatorio);
+                        td_actual = lista_tds[n_generados_valido];
+                        td_actual.innerHTML = num_aleatorio;
+                        n_generados_valido++;
+                    } else {
+                        console.log ("REPETIDO " + num_aleatorio);
+                    }
+                }while (n_generados_valido<dimension);
+                
+               /* for (var i = 0; i < (dimension); i++) {
+                    td_actual = lista_tds[i];
+                    num_aleatorio = genererarNumeroAleatorio(0, 90);
+                    lista_numeros.push(num_aleatorio);
+                    td_actual.innerHTML = num_aleatorio;
+                }//acabo de rellenar*/
+                console.log("lista_numeros = " +lista_numeros);
+            }
+
+            function generarCarton() {
+                pintarCarton();//dibujo la tabla, el cartón, la estructura
+                rellenarCarton();//relleno con núms. aleatorios
+            }
+
+
+            function genererarNumeroAleatorio(lim_inferior, lim_superior) {
+                var num_aleatorio = 0;
+
+                var n1 = Math.random();//entro 0 y 1
+                num_aleatorio = (n1 * (lim_superior - lim_inferior + 1)) + lim_inferior
+                num_aleatorio = Math.ceil(num_aleatorio);//redondeo
+
+                return num_aleatorio;
+            }
+
+
+    </script>
+</head>
+<body>
+    <table id="carton">
+    </table>
+</body>
+
+</html>

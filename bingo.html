@@ -27,36 +27,77 @@
             }
         }
 
-            function rellenarCarton() {
-                var lista_tds = document.querySelectorAll("td");
-                var dimension = FILAS * COLUMNAS;
-                var td_actual;
-                var num_aleatorio;
-                lista_numeros = new Array();//con esto me creo la lista vacía
-                var n_generados_valido = 0;
+        /**
+         * FUNCIÓN que recibe un número y comprueba si está ya en el cartón
+         * devovlemos true si sí, false, si no.
+         * */
+        function isRepetido (numero_aleatorio)
+        {
+            var repetido = false;
+                //TODO chequear si el numero_aletatorio está ya
+                /*if (lista_numeros.includes(numero_aleatorio))
+                {//el número ya estaba en la lista
+                    repetido = true;
+                } else {//el número NO estaba en la lista
+                    repetido = false;
+                }*/
+                repetido = lista_numeros.includes(numero_aleatorio);   
 
-                do
-                {
-                    num_aleatorio = genererarNumeroAleatorio(0, 90);
-                    if (lista_numeros.indexOf(num_aleatorio)==-1)
-                    {
-                        console.log ("No está, bien ");
-                        lista_numeros.push(num_aleatorio);
-                        td_actual = lista_tds[n_generados_valido];
-                        td_actual.innerHTML = num_aleatorio;
-                        n_generados_valido++;
-                    } else {
-                        console.log ("REPETIDO " + num_aleatorio);
-                    }
-                }while (n_generados_valido<dimension);
-                
-               /* for (var i = 0; i < (dimension); i++) {
-                    td_actual = lista_tds[i];
-                    num_aleatorio = genererarNumeroAleatorio(0, 90);
+            return repetido;
+
+        }
+
+        function crearListaNumeroAleatorioSinRepetir ()
+        {   var num_aleatorio;
+            var n_generados_valido=0;
+            var dimension = FILAS *  COLUMNAS;
+
+            do {
+                num_aleatorio = genererarNumeroAleatorio(0, 90);
+                if (!isRepetido(num_aleatorio)) {
+                    console.log("No está, bien ");
                     lista_numeros.push(num_aleatorio);
-                    td_actual.innerHTML = num_aleatorio;
-                }//acabo de rellenar*/
-                console.log("lista_numeros = " +lista_numeros);
+                    n_generados_valido++;
+                } else {
+                    console.log("REPETIDO " + num_aleatorio);
+                }
+            } while (n_generados_valido < dimension);
+
+        }
+        function mostrarListaEnCarton ()
+        {
+            var lista_tds = document.querySelectorAll("td");
+            var dimension = FILAS * COLUMNAS;
+            var td_actual;
+
+            for (var i = 0; i < (dimension); i++) {
+                    td_actual = lista_tds[i]; 
+                    td_actual.innerHTML = lista_numeros[i];
+                }
+        }
+            function rellenarCarton() {
+               
+                lista_numeros = new Array();//con esto me creo la lista vacía
+               
+                crearListaNumeroAleatorioSinRepetir();
+                lista_numeros.sort(comparaNumeros);
+                mostrarListaEnCarton();
+                
+            }
+
+            function comparaNumeros (n1, n2)
+            {
+                var valor_devuelto;
+
+                    valor_devuelto = n1-n2;
+
+                    /*if (n1>n2) 
+                        {valor_devuelto = 1;} 
+                        else if (n1<n2) 
+                            {valor_devuelto= -1} 
+                            else {valor_devuelto = 0;}*/
+
+                return valor_devuelto
             }
 
             function generarCarton() {

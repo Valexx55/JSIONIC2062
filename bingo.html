@@ -2,13 +2,24 @@
 
 <head>
     <meta charset="UTF-8">
+    <title>
+        BINGO, YO BINGO.COM
+    </title>
+    
+    <link rel="stylesheet" type="text/css" href="estilobingo.css">
     <script>
 
         const FILAS = 3;
         const COLUMNAS = 5;
         var lista_numeros;
+        const RETARDO_JUEGO = 250;
 
         window.onload = generarCarton;
+
+        const RUTA_GIF="imgimc/sacandobola.gif";
+
+        var saca;
+
 
 
         function pintarCarton() {
@@ -81,6 +92,7 @@
                
                 crearListaNumeroAleatorioSinRepetir();
                 lista_numeros.sort(comparaNumeros);
+                //lista_numeros.reverse();
                 mostrarListaEnCarton();
                 
             }
@@ -100,17 +112,122 @@
                 return valor_devuelto
             }
 
-            function generarCarton() {
-                pintarCarton();//dibujo la tabla, el cartón, la estructura
-                rellenarCarton();//relleno con núms. aleatorios
+            function eliminarNumTablero (numero)
+            {
+                var lista_tds = document.querySelectorAll("td");
+                var encontrado = false;
+                var num_aux=0;
+                var pos = 0;
+                do {
+                    num_aux = lista_tds[pos].innerHTML;
+                    if (num_aux==numero)
+                    {
+                        console.log ("lo encontré");
+                        lista_tds[pos].innerHTML = "*";
+                        encontrado=true;
+                    } else {
+                        pos = pos+1;
+                    }
+
+                }
+                while (!encontrado);
+
             }
 
+            var pos_saca = 0;
 
+            function comprobarResultado()
+            {
+                var imagen_bombo = document.getElementById("imagen_lisa");
+                imagen_bombo.remove();
+                var num_aleatorio = saca[pos_saca];//pillo número genererarNumeroAleatorio(0, 90);
+                pos_saca++;
+                var div_n_extraido = document.getElementById ("numero_extraido");
+                div_n_extraido.innerHTML = num_aleatorio;
+                if (lista_numeros.includes(num_aleatorio))
+                {
+                    console.log("tengo el número");
+                     //LO MARCO Y LO ELIMNO
+                    var pos = lista_numeros.indexOf (num_aleatorio);
+                    lista_numeros.splice(pos, 1);//saco de la lista
+                    eliminarNumTablero(num_aleatorio);//quito del tablero
+                    //SI HE GANADO, PARO
+                    if (lista_numeros.length == 0)
+                    {
+                        console.log("BIIINGO");
+                        alert ("BINGO");  
+                        window.open("https://www.amazon.es"); 
+                    } else {
+                        console.log ("no he acabado aún me quedan " + lista_numeros.length);
+                        setTimeout(jugar, RETARDO_JUEGO);
+                    }
+                } else {
+                    console.log("NO tengo el número");
+                    setTimeout(jugar, RETARDO_JUEGO);
+                }
+
+            }
+
+            function sacarBola ()
+            {
+                var imagen_bombo = document.createElement("img");
+                imagen_bombo.id = "imagen_lisa";
+                imagen_bombo.src = "imgimc/sacandobola.gif";
+                var div_imagen = document.getElementById("imagen");
+                div_imagen.appendChild(imagen_bombo);
+                
+            }
+
+            function shuffle(a) {
+                var j, x, i;
+                for (i = a.length - 1; i > 0; i--) {
+                    j = Math.floor(Math.random() * (i + 1));
+                    x = a[i];
+                    a[i] = a[j];
+                    a[j] = x;
+                }
+                return a;
+            }
+
+            function rellenarSaca ()
+            {
+                saca = new Array ();
+
+                for (var i = 0; i<=90; i++ )
+                {
+                    saca.push (i);
+                }
+                console.log ("Saca = " + saca);
+                shuffle(saca);
+                console.log ("Saca post shuffle = " + saca);
+            }
+
+            function generarCarton() {
+                
+                pintarCarton();//dibujo la tabla, el cartón, la estructura
+                rellenarCarton();//relleno con núms. aleatorios
+                rellenarSaca();
+
+                jugar();
+            }
+
+            function jugar ()
+            {
+                //caso especial
+                var div_n_extraido = document.getElementById("numero_extraido");
+                div_n_extraido.innerHTML="";//limpio
+                sacarBola();
+                setTimeout(comprobarResultado, RETARDO_JUEGO);
+                
+
+            }
+
+               // [0, 91 ]
             function genererarNumeroAleatorio(lim_inferior, lim_superior) {
                 var num_aleatorio = 0;
 
                 var n1 = Math.random();//entro 0 y 1
-                num_aleatorio = (n1 * (lim_superior - lim_inferior + 1)) + lim_inferior
+                num_aleatorio = (n1 * (lim_superior - lim_inferior));// +1;
                 num_aleatorio = Math.ceil(num_aleatorio);//redondeo
 
                 return num_aleatorio;
@@ -122,6 +239,13 @@
 <body>
     <table id="carton">
     </table>
-</body>
+    <div id="resultados">
+        <div id="imagen">       
+        </div>
+        <div id="numero_extraido" class="num_extra">
+        </div>
+        
+    </div>
+    </body>
 
 </html>

@@ -1,0 +1,34 @@
+td {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    border:2px solid blueviolet;
+    margin: auto;
+    font-size: 2em;
+    text-align: center;
+    background-color: lightgrey;
+}
+
+table{
+    margin: auto;
+}
+
+img{
+
+    width: 150px;
+    height: 150px;
+}
+
+div img {
+    margin: auto;
+}
+
+#resultados {
+    justify-content: center; /* For horizontal alignment */
+    align-items: center; /* For vertical alignment */
+    display: flex;
+    flex-wrap: wrap; /* Optional. only if you want the items to wrap */
+}
+.num_extra {
+    font-size: 3em;
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <!--aquí mi código de JS-->
+    <script>
+
+        const SERVICIO_DNI = "http://10.1.2.10:8081/cfticionic/calculaletra/";
+        //TODO HACED QUE FUNCIONE EL CÁLCULO DE LA LETRA PARA DNI EXTRANEJEROS
+
+        function obtenerDniIntroducido ()
+        {
+            var input_dni = document.getElementById("numdni");
+            return input_dni.value;
+
+        }
+
+        var xmlHR = new XMLHttpRequest();
+
+        function llamarAlServidor (numdni)
+        {
+            xmlHR.onreadystatechange = letraDniCalculada;
+            var uri = SERVICIO_DNI +numdni;  
+            console.log ("URI = " + uri);
+            xmlHR.open("GET", uri, true);
+            xmlHR.send(null);//el cuerpo va vacío
+
+        }
+
+        function letraDniCalculada ()
+        {
+            if (xmlHR.readyState==4)
+            {
+                console.log("La com ha terminado");
+                if (xmlHR.status==200)
+                {
+                    console.log("RESP OK");
+                    console.log("TIPO MIME " + xmlHR.responseType);
+                    var cuerpo_respuesta = xmlHR.responseText;
+                    var objeto_dni = JSON.parse(cuerpo_respuesta);
+                    mostrarResultado (objeto_dni);
+
+                } else {
+                    console.log("HUBO UN FALLO "+xmlHR.status);
+                    alert("No se ha podido calcular el DNI\n Vuelva más tarde ");
+                }
+            } else {
+                console.log("La com está en proceso " +xmlHR.readyState );
+            }
+
+        }
+
+        function mostrarResultado (objeto_dni)
+        {
+            console.log ("numero " + objeto_dni.numero);
+            console.log ("letra " + objeto_dni.letra);
+            alert ("La letra de su de dni es " +objeto_dni.letra);
+        } 
+
+        function calcularLetra() { //inicio 
+           //1 OBTENER EL DNI INTRODUCIDO
+           var numdni = obtenerDniIntroducido ();
+           // 2 LLAMAR AL SERVIDOR PARA QUE ME CALCULE LA LETRA DE ESE DNI
+           llamarAlServidor (numdni);
+           // 3 MOSTRAR EL RESULTADO
+        }//end
+    </script>
+</head>
+
+<body>
+    <!--aquí empiza lo visible-->
+    <input type="number" size="10" id="numdni" />
+    <!--<select id="select_letra">
+        <option selected>NACIONAL</option>
+        <option>X</option>
+        <option>Y</option>
+        <option>Z</option>
+    </select>-->
+
+    <button onclick="calcularLetra ();">CALCULAR LETRA</button>
+</body>
+
+</html> 

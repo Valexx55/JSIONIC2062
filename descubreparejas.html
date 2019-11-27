@@ -1,0 +1,233 @@
+<html>
+
+<head>
+    <title>
+        DESCUBRIR PAREJAS - Juego de Memoria
+    </title>
+    <link rel="stylesheet" type="text/css" href="css/estilo2.css">
+    <script src="https://albert-gonzalez.github.io/easytimer.js/dist/easytimer.min.js"></script>
+    <!--<script src="easytimer.js"></script>-->
+    <script language="javascript">
+
+        //window.onload = iniciarTablero;
+        var reloj;
+        var imagen_tocada = false;
+        var primer_img_tocada; var segunda_imagen_tocada;
+        var num_aciertos = 0;//representa el número de aciertos que lleva el usuario
+        var total_aciertos;
+        var abierto = true;
+
+        var lista_imagenes = ["imgimc/p6.jpg", "imgimc/delgado.jpeg", "imgimc/pantera.jpg", "imgimc/obeso.jpeg", "imgimc/sobrepeso.jpeg", "imgimc/ideal.jpeg", "imgimc/fotonegra.jpg", "imgimc/fotosalmon.jpg"];
+       
+        //obtengo n aleatorio [0, dimension]
+        //obtengo la foto de esa posición
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+
+        function shuffle(a) {
+            var j, x, i;
+            for (i = a.length - 1; i > 0; i--) {
+                j = Math.floor(Math.random() * (i + 1));
+                x = a[i];
+                a[i] = a[j];
+                a[j] = x;
+            }
+            return a;
+        }
+
+        function crearArrayImagenes(nceldas) {
+            var imagen_aux;
+            var pos_elegida;
+
+            array_imagenes_random = new Array();
+
+//con este bucle consigo seleccionar parejas de fotos aleaotrias hasta cubrir las necesidades del numero de cerldas
+            for (var n = 0; n < nceldas; n = n + 2) {
+
+                pos_elegida = getRandomInt(0, lista_imagenes.length);//obtengo una foto
+                if (array_imagenes_random.indexOf(lista_imagenes[pos_elegida]) == -1) {//si no está , así evito repetir
+                    array_imagenes_random.push(lista_imagenes[pos_elegida]);//añado
+                    array_imagenes_random.push(lista_imagenes[pos_elegida]);//añado
+
+                } else {//ya estaban
+                    n = n - 2;
+                }
+
+            }
+//barajeo para que no vayan juntas a, a, b, b, c, c
+            array_imagenes_random = shuffle(array_imagenes_random);//barajeo el array
+
+            return array_imagenes_random;
+        }
+
+        function actualizarReloj() {
+            reloj.addEventListener('secondsUpdated', function (e) {
+                document.getElementById("tiempo").innerHTML = reloj.getTimeValues().toString();
+            });
+        }
+
+        function crearTd() {
+            var elemento_td;
+
+            elemento_td = document.createElement("td");
+
+            return elemento_td;
+        }
+
+
+
+        function crearImg(foto_celda) {
+            var elemento_img;
+
+                elemento_img = document.createElement("img");
+                elemento_img.src = foto_celda;
+
+            return elemento_img;
+        }
+
+        function crearTabla(nfilas, ncolumnas, array_imagenes) {
+            var tabla = document.getElementById("tabla");
+            var fila;
+            var celda;
+            var imagen;
+            var ncelda_actual = 0;
+
+            for (var filas = 0; filas < nfilas; filas++) 
+            {
+                fila = document.createElement("tr");
+                for (var columnas = 0; columnas < ncolumnas; columnas++) {
+                    celda = crearTd();
+                    imagen = crearImg(array_imagenes[ncelda_actual]);
+                
+                    celda.appendChild(imagen);
+                    ncelda_actual=ncelda_actual+1;
+
+                    fila.appendChild(celda);
+                }
+                tabla.appendChild(fila);
+            }
+
+        }
+
+        
+
+        function iniciarTablero() {
+            console.log("Inicia Tablero . . .");
+
+            //Asignar los listeners
+            var td_actual;
+            var hijo_img;
+
+            var numfilas;
+            var numcolumnas;
+            var numceldas;
+
+
+
+            var select_dim = document.getElementById("select_dim");
+            switch (select_dim.selectedIndex)
+            {
+                case 0: numfilas=2; numcolumnas=2; break;
+                case 1: numfilas=2; numcolumnas=3; break;
+                case 2: numfilas=3; numcolumnas=2; break;
+                case 3: numfilas=4; numcolumnas=2; break;
+                case 4: numfilas=2; numcolumnas=4; break;
+                case 5: numfilas=4; numcolumnas=3; break;
+                case 6: numfilas=3; numcolumnas=4; break;
+                case 7: numfilas=4; numcolumnas=4; break;
+
+            }
+
+            numceldas = numfilas*numcolumnas;
+
+            var array_imagenes = crearArrayImagenes(numceldas);
+            crearTabla(numfilas, numcolumnas, array_imagenes);
+            var lista_td = document.querySelectorAll("td");
+            for (var i = 0; i < lista_td.length; i++) {
+                td_actual = lista_td[i];
+                td_actual.addEventListener('click', tocadoImagen);
+                hijo_img = td_actual.firstElementChild;
+                hijo_img.style.visibility = 'hidden';
+            }
+            total_aciertos = numceldas/2;
+            console.log("Fin Inicia Tablero . . .");
+            //Ocultar las imágenes
+            reloj = new easytimer.Timer();
+            reloj.start();
+            actualizarReloj();
+        }
+
+        function tocadoImagen() {
+
+            console.log("El usuario tocó el td");
+
+            // SI la imagen que ha tocado está visible --> no hago nada
+            //si no, caso general
+            var especial = this.firstElementChild; //accedo a la imagen tocada
+            if ((especial.style.visibility == 'hidden') && (abierto)) {
+                if (!imagen_tocada) //imagen_tocada es false
+                { //1er intento
+                    //obtengo imagen
+                    console.log("1 er intento");
+                    primer_img_tocada = this.firstElementChild;
+                    primer_img_tocada.style.visibility = 'visible';
+                    imagen_tocada = true;
+                } else { //2º intento imagen_tocada es true
+                    console.log("2 o intento");
+                    segunda_imagen_tocada = this.firstElementChild;
+                    segunda_imagen_tocada.style.visibility = 'visible';
+                    imagen_tocada = false;//para volver al primer casos
+                    var nombre_img_1 = primer_img_tocada.src;
+                    var nombre_img_2 = segunda_imagen_tocada.src;
+                    if (nombre_img_1.localeCompare(nombre_img_2) == 0) {
+                        console.log("Acierto");
+                        num_aciertos = num_aciertos + 1;//num_aciertos++
+                        if (num_aciertos == total_aciertos) {
+                            console.log("Ha ganado");
+                            //alert ("Has ganado socio, ENHORABUENA");
+                            reloj.stop();
+                            //TODO Obtener el tiempo empleado y enviarlo
+                            location.href = "http://www.cnn.com";
+
+                        }
+
+                    } else {
+                        console.log("FALLO, las tapo");
+                        abierto = false;
+                        setTimeout(function () { voltear(primer_img_tocada, segunda_imagen_tocada) },
+                            900);
+                    }
+
+                }
+            }
+        }
+        function voltear(primer_img_tocadal, segunda_imagen_tocadal) {
+            primer_img_tocadal.style.visibility = 'hidden';
+            segunda_imagen_tocadal.style.visibility = 'hidden';
+            abierto = true;
+        }
+    </script>
+</head>
+
+<body>
+    <select id="select_dim">
+        <option>2x2</option>
+        <option>2x3</option>
+        <option>3x2</option>
+        <option>4x2</option>
+        <option>2x4</option>
+        <option>4x3</option>
+        <option>3x4</option>
+        <option>4x4</option>
+    </select>
+    <button onclick="iniciarTablero();">Comenzar</button>
+    <table id="tabla">
+
+    </table>
+    <div id="tiempo"></div>
+</body>
+
+</html>

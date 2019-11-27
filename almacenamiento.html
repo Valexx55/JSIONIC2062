@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <script>
+        function guardar (clave, valor)
+        {
+            localStorage.setItem(clave, valor);
+        }
+        function leer (clave)
+        {
+            var valor;
+
+                valor = localStorage.getItem(clave);
+
+            return valor;
+        }
+        function borrar (clave)
+        {
+            localStorage.removeItem(clave);
+        }
+        function existe (clave)
+        {
+            var esta = false;
+
+                esta = (localStorage.getItem(clave)!=null);
+
+            return esta;
+        }
+        function limpiarMemoria ()
+        {
+            localStorage.clear();
+        }
+
+        guardar('usuario', 'javi');
+        var usuario = leer ('usuario');
+        console.log ("usuario = " + usuario);
+        console.log ("existe usuario = " +existe('usuario'));
+        borrar('usuario');
+        console.log ("existe usuario = " +existe('usuario'));
+        guardar('usuario', 'javi');
+        limpiarMemoria();
+
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>
